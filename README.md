@@ -6,6 +6,8 @@ Base estructural y técnica de una tienda educativa de hardware, componentes y p
 
 El backend es la prioridad. El frontend únicamente comprueba la comunicación con `GET /api/estado`: no presenta catálogo, inicio de sesión, carrito ni administración.
 
+La organización posterior del frontend añade archivos reservados para los cuatro módulos y para el futuro empaquetado móvil. **Todos esos archivos nuevos están vacíos de código y contienen únicamente comentarios que explican qué irá en cada uno.** La aplicación técnica existente conserva su comportamiento.
+
 ## Tecnologías y requisitos
 
 | Parte | Tecnología utilizada |
@@ -295,6 +297,34 @@ Respuesta HTTP 200 esperada:
 {"estado":"Backend funcionando"}
 ```
 
+## Archivos reservados del frontend
+
+Por petición del usuario se organizaron 61 archivos nuevos sin programar su contenido. Los archivos TypeScript y CSS tienen únicamente comentarios `/* ... */`; las plantillas HTML tienen únicamente comentarios `<!-- ... -->`. No contienen imports, clases, interfaces declaradas, firmas de métodos, reglas CSS, elementos visuales ni peticiones HTTP. Los nombres de tipos mencionados en los comentarios son las clases o interfaces que el equipo podrá escribir posteriormente.
+
+| Ubicación | Archivos nuevos | Qué se desarrollará después |
+| --- | --- | --- |
+| `Modulos_Objetos/Productos_Articulos` | 10 | Componente de administración, servicio, contrato, modelo, categorías, solicitudes y respuesta de producto |
+| `Modulos_Objetos/Catalogo_Listado` | 10 | Componente de consulta, servicio, contrato, búsqueda, filtros y respuestas de catálogo |
+| `Modulos_Objetos/Carrito_Cesta` | 17 | Componentes de carrito personal e historial, servicios, contratos, modelos, solicitudes y respuestas |
+| `Modulos_Objetos/Usuarios_Cuentas` | 19 | Componentes de sesión y consulta de usuarios, servicios, contratos, modelos, roles, solicitudes y respuestas |
+| `Movil_Dispositivos` | 2 | Contrato y servicio para consultar la plataforma web, Android o iOS |
+| Raíz de `src/app` | 2 | `rutas-aplicacion.ts` y `configuracion-conexion-servidor.ts` |
+| Raíz del frontend | 1 | `capacitor.config.ts`, reservado para configuración futura del empaquetado móvil |
+
+Los módulos del frontend no almacenan otra copia del catálogo ni tienen repositorios o datos hardcodeados propios. Sus comentarios distinguen componentes de pantalla, servicios que usarán HTTP y contratos de entrada o salida. Los modelos de usuario públicos no contendrán contraseñas; el futuro control visual de permisos no sustituirá las comprobaciones del backend.
+
+Los nombres propios siguen en español, con interfaces futuras `Interfaz...` y carpetas dobles. En Angular una interfaz TypeScript no es por sí sola una dependencia disponible en ejecución: cuando se programe la inyección habrá que utilizar una clase o un token adecuado y constructores explícitos.
+
+Un único componente de Productos o Catálogo permanece en la raíz de su módulo junto con su plantilla y archivo de estilos. Las carpetas `Componentes_Vistas` se justifican en Carrito y Usuarios porque cada una agrupa dos componentes distintos. Los servicios y contratos únicos también permanecen en la raíz lógica; no se crean carpetas para un solo archivo. `Movil_Dispositivos` agrupa dos archivos técnicos y no añade un módulo de negocio al backend.
+
+## Preparación móvil reservada
+
+`capacitor.config.ts` solo documenta dónde se definirán el identificador de aplicación, nombre y carpeta de los archivos web compilados. La [documentación oficial de configuración de Capacitor](https://capacitorjs.com/docs/config) describe esas opciones. La reserva todavía no es una configuración operativa.
+
+En una fase posterior el equipo deberá instalar las herramientas, completar la configuración, compilar la interfaz y generar los proyectos Android e iOS mediante el [flujo oficial de Capacitor](https://capacitorjs.com/docs/basics/workflow). No se instalaron dependencias móviles ni se generaron proyectos nativos o un APK durante esta organización de archivos.
+
+`configuracion-conexion-servidor.ts` recuerda que, en un teléfono, `localhost` apunta al propio teléfono y que la dirección futura del backend deberá ser accesible desde el dispositivo. Esta decisión queda documentada; no se cambió la configuración activa de la consulta técnica.
+
 ## Arrancar el frontend
 
 En otra terminal:
@@ -330,6 +360,8 @@ Frontend: [http://localhost:4200](http://localhost:4200).
 | Revisión estructural | 57 C# propios con cabeceras educativas, 11 interfaces backend `Interfaz...`, sin carpetas propias creadas para un único archivo |
 
 Se comprobó la integración real del frontend con `/api/estado`. No se crearon tests automatizados ni se ejecutaron historias como funcionalidades completas.
+
+En la organización posterior del frontend se verificaron los 61 archivos nuevos: todos contienen exclusivamente comentarios y todas las carpetas personalizadas agrupan más de un archivo. `npm run build` volvió a finalizar con código de salida 0 y el mismo bundle inicial de 123.57 kB. El backend, las dependencias y el código activo del frontend no se modificaron.
 
 ## Posibles evoluciones futuras
 
@@ -432,14 +464,97 @@ TiendaPC/
 ├── Frontend_Interfaz/
 │   ├── src/
 │   │   ├── app/
+│   │   │   ├── Modulos_Objetos/
+│   │   │   │   ├── Carrito_Cesta/
+│   │   │   │   │   ├── Componentes_Vistas/
+│   │   │   │   │   │   ├── componente-carrito-personal.css
+│   │   │   │   │   │   ├── componente-carrito-personal.html
+│   │   │   │   │   │   ├── componente-carrito-personal.ts
+│   │   │   │   │   │   ├── componente-historial-carritos.css
+│   │   │   │   │   │   ├── componente-historial-carritos.html
+│   │   │   │   │   │   └── componente-historial-carritos.ts
+│   │   │   │   │   ├── Interfaces_Contratos/
+│   │   │   │   │   │   ├── interfaz-administrar-carrito.ts
+│   │   │   │   │   │   └── interfaz-consultar-historial-carritos.ts
+│   │   │   │   │   ├── Modelos_Objetos/
+│   │   │   │   │   │   ├── modelo-carrito-compra.ts
+│   │   │   │   │   │   └── modelo-producto-carrito.ts
+│   │   │   │   │   ├── Respuestas_Resultados/
+│   │   │   │   │   │   ├── respuesta-detalle-carrito.ts
+│   │   │   │   │   │   ├── respuesta-historial-carrito.ts
+│   │   │   │   │   │   └── respuesta-resumen-carrito.ts
+│   │   │   │   │   ├── Servicios_Procesos/
+│   │   │   │   │   │   ├── servicio-administrar-carrito.ts
+│   │   │   │   │   │   └── servicio-consultar-historial-carritos.ts
+│   │   │   │   │   └── Solicitudes_Peticiones/
+│   │   │   │   │       ├── solicitud-agregar-producto-carrito.ts
+│   │   │   │   │       └── solicitud-cambiar-cantidad-carrito.ts
+│   │   │   │   ├── Catalogo_Listado/
+│   │   │   │   │   ├── Respuestas_Resultados/
+│   │   │   │   │   │   ├── respuesta-categorias-catalogo.ts
+│   │   │   │   │   │   ├── respuesta-detalle-producto.ts
+│   │   │   │   │   │   └── respuesta-producto-catalogo.ts
+│   │   │   │   │   ├── Solicitudes_Peticiones/
+│   │   │   │   │   │   ├── solicitud-buscar-catalogo.ts
+│   │   │   │   │   │   └── solicitud-filtrar-catalogo.ts
+│   │   │   │   │   ├── componente-consultar-catalogo.css
+│   │   │   │   │   ├── componente-consultar-catalogo.html
+│   │   │   │   │   ├── componente-consultar-catalogo.ts
+│   │   │   │   │   ├── interfaz-consultar-catalogo.ts
+│   │   │   │   │   └── servicio-consultar-catalogo.ts
+│   │   │   │   ├── Productos_Articulos/
+│   │   │   │   │   ├── Modelos_Objetos/
+│   │   │   │   │   │   ├── enumeracion-categoria-producto.ts
+│   │   │   │   │   │   └── modelo-producto.ts
+│   │   │   │   │   ├── Solicitudes_Peticiones/
+│   │   │   │   │   │   ├── solicitud-modificar-producto.ts
+│   │   │   │   │   │   └── solicitud-registrar-producto.ts
+│   │   │   │   │   ├── componente-administrar-productos.css
+│   │   │   │   │   ├── componente-administrar-productos.html
+│   │   │   │   │   ├── componente-administrar-productos.ts
+│   │   │   │   │   ├── interfaz-administrar-productos.ts
+│   │   │   │   │   ├── respuesta-informacion-producto.ts
+│   │   │   │   │   └── servicio-administrar-productos.ts
+│   │   │   │   └── Usuarios_Cuentas/
+│   │   │   │       ├── Componentes_Vistas/
+│   │   │   │       │   ├── componente-consulta-usuarios.css
+│   │   │   │       │   ├── componente-consulta-usuarios.html
+│   │   │   │       │   ├── componente-consulta-usuarios.ts
+│   │   │   │       │   ├── componente-sesion-usuario.css
+│   │   │   │       │   ├── componente-sesion-usuario.html
+│   │   │   │       │   └── componente-sesion-usuario.ts
+│   │   │   │       ├── Interfaces_Contratos/
+│   │   │   │       │   ├── interfaz-consultar-usuarios.ts
+│   │   │   │       │   ├── interfaz-gestionar-sesion.ts
+│   │   │   │       │   └── interfaz-validar-permisos.ts
+│   │   │   │       ├── Modelos_Objetos/
+│   │   │   │       │   ├── enumeracion-rol-usuario.ts
+│   │   │   │       │   ├── modelo-sesion.ts
+│   │   │   │       │   └── modelo-usuario.ts
+│   │   │   │       ├── Respuestas_Resultados/
+│   │   │   │       │   ├── respuesta-informacion-usuario.ts
+│   │   │   │       │   └── respuesta-sesion-usuario.ts
+│   │   │   │       ├── Servicios_Procesos/
+│   │   │   │       │   ├── servicio-consultar-usuarios.ts
+│   │   │   │       │   ├── servicio-gestionar-sesion.ts
+│   │   │   │       │   └── servicio-validar-permisos.ts
+│   │   │   │       └── Solicitudes_Peticiones/
+│   │   │   │           ├── solicitud-cerrar-sesion.ts
+│   │   │   │           └── solicitud-iniciar-sesion.ts
+│   │   │   ├── Movil_Dispositivos/
+│   │   │   │   ├── interfaz-consultar-plataforma.ts
+│   │   │   │   └── servicio-consultar-plataforma.ts
 │   │   │   ├── componente-aplicacion.html
 │   │   │   ├── componente-aplicacion.ts
 │   │   │   ├── configuracion-aplicacion.ts
+│   │   │   ├── configuracion-conexion-servidor.ts
+│   │   │   ├── rutas-aplicacion.ts
 │   │   │   └── servicio-estado-backend.ts
 │   │   ├── estilos.css
 │   │   ├── index.html
 │   │   └── main.ts
 │   ├── angular.json
+│   ├── capacitor.config.ts
 │   ├── package-lock.json
 │   ├── package.json
 │   ├── tsconfig.app.json
