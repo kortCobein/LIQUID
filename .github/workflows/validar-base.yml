@@ -1,0 +1,62 @@
+name: Validar base del proyecto
+
+on:
+  push:
+    branches:
+      - main
+      - backend-servidor
+      - frontend-interfaz
+      - "modulo-*"
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  validar-base:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Descargar repositorio
+        uses: actions/checkout@v4
+
+      - name: Preparar .NET 10
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "10.0.x"
+
+      - name: Preparar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22.x"
+
+      - name: Verificar archivos base
+        shell: bash
+        run: |
+          test -f README.md
+          test -f .gitignore
+          echo "Archivos base encontrados."
+
+      - name: Compilar backend si ya existe
+        shell: bash
+        run: |
+          PROYECTO=$(find Backend_Servidor -name "*.csproj" -print -quit 2>/dev/null || true)
+
+          if [ -n "$PROYECTO" ]; then
+            echo "Proyecto .NET encontrado: $PROYECTO"
+            dotnet restore "$PROYECTO"
+            dotnet build "$PROYECTO" --no-restore
+          else
+            echo "Backend_Servidor todavía no contiene un .csproj. Cimentación pendiente."
+          fi
+
+      - name: Compilar frontend si ya existe
+        shell: bash
+        run: |
+          if [ -f "Frontend_Interfaz/package.json" ]; then
+            cd Frontend_Interfaz
+            npm ci
+            npm run build
+          else
+            echo "Frontend_Interfaz todavía no contiene package.json. Cimentación pendiente."
+          fi
